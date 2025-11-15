@@ -18,39 +18,32 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-                }
+                bat """
+                docker build -t %IMAGE_NAME%:%IMAGE_TAG% .
+                """
             }
         }
 
         stage('Push to Docker Hub') {
             steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CRED,
-                                                     usernameVariable: 'USER',
-                                                     passwordVariable: 'PASS')]) {
-                        sh """
-                        echo "$PASS" | docker login -u "$USER" --password-stdin
-                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                        """
-                    }
+                withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CRED,
+                                                 usernameVariable: 'USER',
+                                                 passwordVariable: 'PASS')]) {
+                    bat """
+                    echo %PASS% | docker login -u %USER% --password-stdin
+                    docker push %IMAGE_NAME%:%IMAGE_TAG%
+                    """
                 }
             }
         }
 
         stage('Deploy Container') {
             steps {
-                script {
-                    // Stop old container (ignore error)
-                    sh "docker stop ${CONTAINER_NAME} || true"
-                    sh "docker rm ${CONTAINER_NAME} || true"
-
-                    // Run new updated container
-                    sh """
-                    docker run -d -p 8080:80 --name ${CONTAINER_NAME} ${IMAGE_NAME}:${IMAGE_TAG}
-                    """
-                }
+                bat """
+                docker stop %CONTAINER_NAME% || echo No container running
+                docker rm %CONTAINER_NAME% || echo Nothing to remove
+                docker run -d -p 8080:80 --name %CONTAINER_NAME% %IMAGE_NAME%:%IMAGE_TAG%
+                """
             }
         }
     }
