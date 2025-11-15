@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "yourdockerhubusername/portfolio"
+        IMAGE_NAME = "omkar797283/portfolio"
         IMAGE_TAG = "latest"
         DOCKER_HUB_CRED = "dockerhub-cred"
         CONTAINER_NAME = "portfolio-site"
