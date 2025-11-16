@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "omkar797283/portfolio"
         IMAGE_TAG = "latest"
-        DOCKER_HUB_CRED = "dockerhub-cred"
+        DOCKER_HUB_CRED = "dockerhub-cred-example1"
         CONTAINER_NAME = "portfolio-site"
     }
 
